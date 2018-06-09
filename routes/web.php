@@ -10,13 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome', ['title' => "Welcome | The Guild"]);
-});
-
-Route::get('/list', 'HeroController@listHeroes');
+Route::get('/', 'HeroController@listHeroes');
 Route::post('/add', 'HeroController@addHero');
 Route::delete('/delete/{id}', 'HeroController@deleteHero');
 Route::post('/edit/{id}', 'HeroController@editHero');
-Route::get('/search', 'HeroController@searchHero');
+Route::get('/search', 'HeroController@search');

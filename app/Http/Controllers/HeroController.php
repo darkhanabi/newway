@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Route;
+use \App\Hero;
 
 class HeroController extends Controller
 {
@@ -15,7 +16,7 @@ class HeroController extends Controller
     public function listHeroes()
     {
         //Get all the database records
-        $heroes = \App\Hero::all();
+        $heroes = Hero::all();
 
         //Go to list page
         return view('list', ['heroes' => $heroes, 'title' => "Hall of Heroes | The Guild", 'route' => NULL]);
@@ -40,7 +41,7 @@ class HeroController extends Controller
         ]);
 
         //Instance and define values
-        $hero = new \App\Hero;
+        $hero = new Hero;
         $hero->name         = $request['name'];
         $hero->class        = $request['class'];
         $hero->role         = $request['role'];
@@ -66,7 +67,7 @@ class HeroController extends Controller
         }
 
         //Redirect to list page
-        return redirect('/list');
+        return redirect('/');
     }
 
     /**
@@ -79,19 +80,23 @@ class HeroController extends Controller
     public function deleteHero($id)
     {
         //Instance
-        $hero = \App\Hero::find($id);
+        $hero = Hero::find($id);
 
         //Delete image
         $imageName = $hero->image;
-        $imageFolder = public_path(). '/images/portraits';
-        $imageFullPath = $imageFolder.'/'.$imageName;
-        unlink($imageFullPath);
+        if ($imageName && !empty($imageName)) {
+            $imageFolder = public_path(). '/images/portraits';
+            $imageFullPath = $imageFolder.'/'.$imageName;
+            if (file_exists($imageFullPath)) {
+                unlink($imageFullPath);
+            }
+        }
 
         //Delete from database
         $hero->delete();
 
         //Redirect to list page
-        return redirect('/list');
+        return redirect('/');
     }
 
     /**
@@ -102,7 +107,7 @@ class HeroController extends Controller
      */
     public function editHero(Request $request, $id)
     {
-        $previousURL = $request->headers->get('referer') ?: '/list';
+        $previousURL = $request->headers->get('referer') ?: '/';
 
         //Validade fields
         $this->validate($request, [
@@ -117,7 +122,7 @@ class HeroController extends Controller
         ]);
 
         //Instance and define values
-        $hero = \App\Hero::find($id);
+        $hero = Hero::find($id);
         $hero->name         = $request['name'];
         $hero->class        = $request['class'];
         $hero->role         = $request['role'];
@@ -149,13 +154,13 @@ class HeroController extends Controller
     /**
      * Search for a hero entry
      */
-    public function searchHero(Request $request)
+    public function search(Request $request)
     {
         $keyword = $request['keyword'];
         $route = Route::getCurrentRoute()->uri();
 
         //Get from database
-        $heroes = \App\Hero::where('name', $keyword)->orWhere('class', $keyword)->orWhere('role', $keyword)->get();
+        $heroes = Hero::where('name', $keyword)->orWhere('class', $keyword)->orWhere('role', $keyword)->get();
 
         //Redirect to list page
         return view('list', ['heroes' => $heroes, 'title' => "Hall of Heroes | The Guild", 'route' => $route]);
