@@ -12,5 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', ['title' => "Welcome | The Guild"]);
 });
+
+Route::get('/list', 'HeroController@listHeroes');
+Route::post('/add', 'HeroController@addHero');
+Route::delete('/delete/{id}', 'HeroController@deleteHero');
+Route::post('/edit/{id}', 'HeroController@editHero');
+Route::get('/search', 'HeroController@searchHero');
