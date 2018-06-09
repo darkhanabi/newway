@@ -62,7 +62,7 @@
 
                 @if ($route == 'search')
                 <div class="offset-md-4 col-md-4 text-center">
-                    <p><a href="/list">Back to List page</a></p>
+                    <p><a href="/">Back to List page</a></p>
                 </div>
                 @endif
 
